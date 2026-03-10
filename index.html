@@ -241,15 +241,34 @@
 
     .grid { display: flex; flex-direction: column; gap: 10px; }
 
-    .sections-columns {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      align-items: start;
+    /* ═══ TABS ═══ */
+    .tabs-nav {
+      display: flex; gap: .5rem;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 0;
     }
-    @media (max-width: 900px) {
-      .sections-columns { grid-template-columns: 1fr; }
+    .tab-btn {
+      font-size: .58rem; letter-spacing: .32em; text-transform: uppercase;
+      color: var(--ghost); padding: .55rem 1.2rem;
+      border: 1px solid transparent;
+      border-bottom: none;
+      background: transparent;
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      cursor: pointer; white-space: nowrap;
+      font-family: var(--sans); font-weight: 300;
+      transition: border-color .2s, color .2s, background .2s;
+      position: relative; bottom: -1px;
     }
+    .tab-btn:hover { color: var(--ink); }
+    .tab-btn.active {
+      border-color: var(--border);
+      border-bottom-color: var(--bg);
+      color: var(--a);
+      background: var(--bg);
+    }
+    .tab-panel { display: none; animation: fadeUp .3s ease; }
+    .tab-panel.active { display: block; }
 
     .card {
       background: linear-gradient(
@@ -452,45 +471,50 @@
       </div>
     </header>
 
-    <div class="sections-columns">
+    <!-- Pestañas -->
+    <nav class="tabs-nav">
+      <button class="tab-btn active" data-tab="servidor">Servidor</button>
+      <button class="tab-btn" data-tab="servicios">Servicios</button>
+      <button class="tab-btn" data-tab="externos">Servicios Externos</button>
+    </nav>
 
-    <div class="section">
-      <div class="section-header"><div class="section-label">Servidor</div><div class="section-line"></div></div>
-      <div class="grid">
-        <a class="card" href="https://192.168.1.100:8006/#/" target="_blank"><div class="icon-wrap"><img src="https://www.proxmox.com/favicon.ico" alt="Proxmox" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🖥️</span></div><div class="card-body"><div class="card-name">Proxmox</div><div class="card-url">192.168.1.100:8006</div></div><div class="status"></div></a>
-        <a class="card" href="http://192.168.1.143/ui/signin" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=truenas.com&sz=64" alt="TrueNAS" onerror="this.classList.add('error-icon')"><span class="icon-fallback">💾</span></div><div class="card-body"><div class="card-name">TrueNAS</div><div class="card-url">192.168.1.143</div></div><div class="status"></div></a>
-        <a class="card" href="http://192.168.1.139:81/login" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=nginxproxymanager.com&sz=64" alt="NPM" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🔀</span></div><div class="card-body"><div class="card-name">Nginx Proxy Manager</div><div class="card-url">192.168.1.139:81</div></div><div class="status"></div></a>
-        <a class="card" href="https://search.google.com/search-console" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=search.google.com&sz=64" alt="GSC" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📊</span></div><div class="card-body"><div class="card-name">Google Search Console</div><div class="card-url">search.google.com</div></div><div class="status"></div></a>
-        <a class="card" href="http://84.78.155.5:10011/loginRemote.htm" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=orange.es&sz=64" alt="Livebox" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📡</span></div><div class="card-body"><div class="card-name">Livebox</div><div class="card-url">84.78.155.5:10011</div></div><div class="status"></div></a>
-
+    <div class="tab-panel active" id="tab-servidor">
+      <div class="section">
+        <div class="grid">
+          <a class="card" href="https://192.168.1.100:8006/#/" target="_blank"><div class="icon-wrap"><img src="https://www.proxmox.com/favicon.ico" alt="Proxmox" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🖥️</span></div><div class="card-body"><div class="card-name">Proxmox</div><div class="card-url">192.168.1.100:8006</div></div><div class="status"></div></a>
+          <a class="card" href="http://192.168.1.143/ui/signin" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=truenas.com&sz=64" alt="TrueNAS" onerror="this.classList.add('error-icon')"><span class="icon-fallback">💾</span></div><div class="card-body"><div class="card-name">TrueNAS</div><div class="card-url">192.168.1.143</div></div><div class="status"></div></a>
+          <a class="card" href="http://192.168.1.139:81/login" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=nginxproxymanager.com&sz=64" alt="NPM" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🔀</span></div><div class="card-body"><div class="card-name">Nginx Proxy Manager</div><div class="card-url">192.168.1.139:81</div></div><div class="status"></div></a>
+          <a class="card" href="https://search.google.com/search-console" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=search.google.com&sz=64" alt="GSC" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📊</span></div><div class="card-body"><div class="card-name">Google Search Console</div><div class="card-url">search.google.com</div></div><div class="status"></div></a>
+          <a class="card" href="http://84.78.155.5:10011/loginRemote.htm" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=orange.es&sz=64" alt="Livebox" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📡</span></div><div class="card-body"><div class="card-name">Livebox</div><div class="card-url">84.78.155.5:10011</div></div><div class="status"></div></a>
+        </div>
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-header"><div class="section-label">Servicios</div><div class="section-line"></div></div>
-      <div class="grid">
-        <a class="card" href="https://luisnietofoto.com" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=luisnietofoto.com&sz=64" alt="LNF" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📷</span></div><div class="card-body"><div class="card-name">Luis Nieto Fotografía</div><div class="card-url">luisnietofoto.com</div></div><div class="status"></div></a>
-        <a class="card" href="https://helenanailshome.com" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=helenanailshome.com&sz=64" alt="HNH" onerror="this.classList.add('error-icon')"><span class="icon-fallback">💅</span></div><div class="card-body"><div class="card-name">Helena Nails Home</div><div class="card-url">helenanailshome.com</div></div><div class="status"></div></a>
-        <a class="card" href="https://cloud.luisnietofoto.com/index.php/login" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=nextcloud.com&sz=64" alt="Nextcloud" onerror="this.classList.add('error-icon')"><span class="icon-fallback">☁️</span></div><div class="card-body"><div class="card-name">Nextcloud</div><div class="card-url">cloud.luisnietofoto.com</div></div><div class="status"></div></a>
-        <a class="card" href="https://immich.luisnietofoto.com/auth/login" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=immich.app&sz=64" alt="Immich" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📸</span></div><div class="card-body"><div class="card-name">Immich</div><div class="card-url">immich.luisnietofoto.com</div></div><div class="status"></div></a>
-        <a class="card" href="https://emby.luisnietofoto.com/web/index.html" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=emby.media&sz=64" alt="Emby" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🎬</span></div><div class="card-body"><div class="card-name">Emby</div><div class="card-url">emby.luisnietofoto.com</div></div><div class="status"></div></a>
+    <div class="tab-panel" id="tab-servicios">
+      <div class="section">
+        <div class="grid">
+          <a class="card" href="https://luisnietofoto.com" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=luisnietofoto.com&sz=64" alt="LNF" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📷</span></div><div class="card-body"><div class="card-name">Luis Nieto Fotografía</div><div class="card-url">luisnietofoto.com</div></div><div class="status"></div></a>
+          <a class="card" href="https://helenanailshome.com" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=helenanailshome.com&sz=64" alt="HNH" onerror="this.classList.add('error-icon')"><span class="icon-fallback">💅</span></div><div class="card-body"><div class="card-name">Helena Nails Home</div><div class="card-url">helenanailshome.com</div></div><div class="status"></div></a>
+          <a class="card" href="https://cloud.luisnietofoto.com/index.php/login" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=nextcloud.com&sz=64" alt="Nextcloud" onerror="this.classList.add('error-icon')"><span class="icon-fallback">☁️</span></div><div class="card-body"><div class="card-name">Nextcloud</div><div class="card-url">cloud.luisnietofoto.com</div></div><div class="status"></div></a>
+          <a class="card" href="https://immich.luisnietofoto.com/auth/login" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=immich.app&sz=64" alt="Immich" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📸</span></div><div class="card-body"><div class="card-name">Immich</div><div class="card-url">immich.luisnietofoto.com</div></div><div class="status"></div></a>
+          <a class="card" href="https://emby.luisnietofoto.com/web/index.html" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=emby.media&sz=64" alt="Emby" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🎬</span></div><div class="card-body"><div class="card-name">Emby</div><div class="card-url">emby.luisnietofoto.com</div></div><div class="status"></div></a>
+        </div>
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-header"><div class="section-label">Servicios Externos</div><div class="section-line"></div></div>
-      <div class="grid">
-        <a class="card" href="https://dash.cloudflare.com" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=cloudflare.com&sz=64" alt="Cloudflare" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🛡️</span></div><div class="card-body"><div class="card-name">Cloudflare</div><div class="card-url">dash.cloudflare.com</div></div><div class="status"></div></a>
-        <a class="card" href="https://mega.nz/fm/id1XXJLb" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=mega.nz&sz=64" alt="Mega" onerror="this.classList.add('error-icon')"><span class="icon-fallback">💿</span></div><div class="card-body"><div class="card-name">Mega</div><div class="card-url">mega.nz</div></div><div class="status"></div></a>
-        <a class="card" href="https://www.amazon.es/photos" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=amazon.es&sz=64" alt="Amazon" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📱</span></div><div class="card-body"><div class="card-name">Amazon Photos</div><div class="card-url">amazon.es/photos</div></div><div class="status"></div></a>
-        <a class="card" href="https://drive.google.com/drive/u/0/my-drive" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=drive.google.com&sz=64" alt="Google Drive" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📁</span></div><div class="card-body"><div class="card-name">Google Drive</div><div class="card-url">drive.google.com</div></div><div class="status"></div></a>
-        <a class="card" href="https://console.cloud.google.com/welcome?project=serene-boulder-427416-v5" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=console.cloud.google.com&sz=64" alt="Google Cloud" onerror="this.classList.add('error-icon')"><span class="icon-fallback">☁️</span></div><div class="card-body"><div class="card-name">Google Cloud</div><div class="card-url">console.cloud.google.com</div></div><div class="status"></div></a>
-        <a class="card" href="https://login.tailscale.com/admin/machines" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=tailscale.com&sz=64" alt="Tailscale" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🔗</span></div><div class="card-body"><div class="card-name">Tailscale</div><div class="card-url">login.tailscale.com</div></div><div class="status"></div></a>
-        <a class="card" href="https://github.com/luisnian" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=github.com&sz=64" alt="GitHub" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🐙</span></div><div class="card-body"><div class="card-name">GitHub</div><div class="card-url">github.com/luisnian</div></div><div class="status"></div></a>
+    <div class="tab-panel" id="tab-externos">
+      <div class="section">
+        <div class="grid">
+          <a class="card" href="https://dash.cloudflare.com" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=cloudflare.com&sz=64" alt="Cloudflare" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🛡️</span></div><div class="card-body"><div class="card-name">Cloudflare</div><div class="card-url">dash.cloudflare.com</div></div><div class="status"></div></a>
+          <a class="card" href="https://mega.nz/fm/id1XXJLb" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=mega.nz&sz=64" alt="Mega" onerror="this.classList.add('error-icon')"><span class="icon-fallback">💿</span></div><div class="card-body"><div class="card-name">Mega</div><div class="card-url">mega.nz</div></div><div class="status"></div></a>
+          <a class="card" href="https://www.amazon.es/photos" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=amazon.es&sz=64" alt="Amazon" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📱</span></div><div class="card-body"><div class="card-name">Amazon Photos</div><div class="card-url">amazon.es/photos</div></div><div class="status"></div></a>
+          <a class="card" href="https://drive.google.com/drive/u/0/my-drive" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=drive.google.com&sz=64" alt="Google Drive" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📁</span></div><div class="card-body"><div class="card-name">Google Drive</div><div class="card-url">drive.google.com</div></div><div class="status"></div></a>
+          <a class="card" href="https://console.cloud.google.com/welcome?project=serene-boulder-427416-v5" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=console.cloud.google.com&sz=64" alt="Google Cloud" onerror="this.classList.add('error-icon')"><span class="icon-fallback">☁️</span></div><div class="card-body"><div class="card-name">Google Cloud</div><div class="card-url">console.cloud.google.com</div></div><div class="status"></div></a>
+          <a class="card" href="https://login.tailscale.com/admin/machines" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=tailscale.com&sz=64" alt="Tailscale" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🔗</span></div><div class="card-body"><div class="card-name">Tailscale</div><div class="card-url">login.tailscale.com</div></div><div class="status"></div></a>
+          <a class="card" href="https://github.com/luisnian" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=github.com&sz=64" alt="GitHub" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🐙</span></div><div class="card-body"><div class="card-name">GitHub</div><div class="card-url">github.com/luisnian</div></div><div class="status"></div></a>
+        </div>
       </div>
     </div>
-
-    </div> <!-- /sections-columns -->
 
   </div>
 </div>
@@ -681,14 +705,36 @@ function updateClock() {
 }
 updateClock(); setInterval(updateClock, 1000);
 
+// ─── Pestañas ────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
 // ─── Búsqueda ────────────────────────────────────────────────
 document.getElementById('search-input').addEventListener('input', e => {
   const q = e.target.value.toLowerCase();
-  document.querySelectorAll('.card').forEach(c => {
-    const t = c.querySelector('.card-name').textContent.toLowerCase()
-            + c.querySelector('.card-url').textContent.toLowerCase();
-    c.style.display = t.includes(q) ? '' : 'none';
-  });
+  if (q) {
+    // Con búsqueda activa: mostrar todos los paneles y filtrar cards
+    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'block');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.card').forEach(c => {
+      const t = c.querySelector('.card-name').textContent.toLowerCase()
+              + c.querySelector('.card-url').textContent.toLowerCase();
+      c.style.display = t.includes(q) ? '' : 'none';
+    });
+  } else {
+    // Sin búsqueda: restaurar sistema de pestañas
+    document.querySelectorAll('.tab-panel').forEach(p => { p.style.display = ''; p.classList.remove('active'); });
+    document.querySelectorAll('.card').forEach(c => c.style.display = '');
+    const firstBtn = document.querySelector('.tab-btn');
+    firstBtn.classList.add('active');
+    document.getElementById('tab-' + firstBtn.dataset.tab).classList.add('active');
+  }
 });
 </script>
 </body>
