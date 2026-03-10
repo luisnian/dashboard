@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ink: #0d0e0f;
+      --dim: #2a2d30;
+      --mid: #60686f;
+      --ghost: #9aa0a6;
+      --pale: #c8cdd2;
+      --ice: #e8eaec;
+      --a: #8bafc8;
+      --line: rgba(138,175,200,.15);
+
+      --bg: #f7f8f9;
+      --surface: rgba(138,175,200,.05);
+      --surface-hover: rgba(138,175,200,.10);
+      --border: rgba(138,175,200,.18);
+      --border-hover: rgba(138,175,200,.42);
+      --text: var(--ink);
+      --text-muted: var(--mid);
+      --text-dim: var(--ghost);
+      --accent: var(--a);
+      --accent-glow: rgba(139,175,200,.15);
+      --red: #c0675a;
+      --green: #5a9e82;
+      --radius: 14px;
+      --radius-sm: 9px;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Outfit', sans-serif;
+    }
+
+    body {
+      font-family: var(--sans);
+      font-weight: 300;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: 
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139,175,200,.10), transparent 60%),
+        radial-gradient(ellipse 55% 40% at 100% 70%, rgba(139,175,200,.07), transparent 55%),
+        radial-gradient(ellipse 45% 35% at 0% 100%,  rgba(139,175,200,.05), transparent 55%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ═══ LOGIN ═══ */
+    #login-screen {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      background-color: var(--bg);
+    }
+    #login-screen::before {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139,175,200,.12), transparent 60%),
+        radial-gradient(ellipse 55% 40% at 100% 70%, rgba(139,175,200,.08), transparent 55%),
+        radial-gradient(ellipse 45% 35% at 0%  100%, rgba(139,175,200,.06), transparent 55%);
+    }
+
+    .login-box {
+      position: relative; z-index: 1;
+      width: 360px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.78) 0%, rgba(240,246,252,0.55) 100%);
+      border: 1px solid rgba(255,255,255,0.75);
+      border-bottom-color: rgba(138,175,200,.20);
+      border-radius: 22px;
+      padding: 44px 38px 38px;
+      backdrop-filter: blur(32px) saturate(1.5) brightness(1.04);
+      -webkit-backdrop-filter: blur(32px) saturate(1.5) brightness(1.04);
+      box-shadow:
+        0 2px 0 rgba(255,255,255,0.85) inset,
+        0 -1px 0 rgba(138,175,200,.12) inset,
+        0 20px 60px rgba(100,130,160,.14),
+        0 2px 8px rgba(100,130,160,.08);
+      animation: fadeUp 0.45s ease;
+    }
+
+    .login-logo { text-align: center; margin-bottom: 36px; }
+    .login-logo-icon { display: flex; justify-content: center; align-items: center; margin-bottom: 14px; }
+    .login-logo-title { font-family: var(--serif); font-size: 22px; font-weight: 300; letter-spacing: -.02em; color: var(--ink); }
+    .login-logo-sub { font-size: 11.5px; font-weight: 400; color: var(--text-muted); margin-top: 4px; letter-spacing: 0.3px; }
+
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block; font-size: 10.5px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 1.2px;
+      color: var(--text-muted); margin-bottom: 8px;
+    }
+    .field-wrap { position: relative; }
+    .field input {
+      width: 100%;
+      background: rgba(138,175,200,.05);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 44px 12px 15px;
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 14px; font-weight: 400;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+    .field input::placeholder { color: var(--ghost); }
+    .field input:focus { border-color: var(--accent); background: rgba(139,175,200,.07); box-shadow: 0 0 0 3px rgba(139,175,200,.12); }
+    .field input.shake { animation: shake 0.35s ease; border-color: var(--red); background: rgba(192,103,90,0.06); }
+
+    .toggle-eye {
+      position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--ghost); padding: 2px; line-height: 0;
+      transition: color 0.2s;
+    }
+    .toggle-eye:hover { color: var(--ink); }
+
+    .lockout-bar {
+      background: rgba(192,103,90,.07);
+      border: 1px solid rgba(192,103,90,.22);
+      border-radius: var(--radius-sm);
+      padding: 9px 14px;
+      font-size: 12px; color: var(--red);
+      font-weight: 500; text-align: center;
+      margin-bottom: 14px; display: none;
+    }
+
+    .attempts-hint {
+      font-size: 11px; color: var(--ghost);
+      text-align: right; margin-top: 5px;
+      min-height: 16px;
+    }
+
+    .btn-login {
+      width: 100%; padding: 13.5px;
+      background: transparent;
+      border: 1px solid rgba(13,14,15,.22);
+      border-radius: 0;
+      color: var(--ink); font-family: var(--sans);
+      font-size: 14px; font-weight: 400;
+      text-transform: uppercase; letter-spacing: .35em;
+      cursor: pointer; margin-top: 8px;
+      transition: border-color .2s, color .2s;
+      box-shadow: none;
+    }
+    .btn-login:hover { border-color: var(--a); color: var(--a); opacity: 1; }
+    .btn-login:active { opacity: 0.7; }
+    .btn-login:disabled { opacity: 0.30; cursor: not-allowed; }
+
+    /* ═══ DASHBOARD ═══ */
+    #dashboard { display: none; position: relative; z-index: 1; }
+
+    .layout { max-width: 1320px; margin: 0 auto; padding: 36px 28px 56px; }
+
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 32px; gap: 16px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--line);
+    }
+    .clock-block { display: flex; flex-direction: column; gap: 3px; }
+    .clock { 
+      font-family: var(--serif);
+      font-size: 54px; font-weight: 300; letter-spacing: -3px; line-height: 1;
+      color: var(--ink);
+    }
+    .date { font-size: 12.5px; font-weight: 400; color: var(--mid); text-transform: capitalize; letter-spacing: 0.2px; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+
+    .search-inner {
+      display: flex; align-items: center; gap: 10px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.68), rgba(220,232,240,0.40));
+      border: 1px solid rgba(255,255,255,0.70);
+      border-bottom-color: rgba(138,175,200,.18);
+      border-radius: var(--radius); padding: 10px 16px;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s; width: 280px;
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.80) inset, 0 4px 14px rgba(100,130,160,.08);
+    }
+    .search-inner:focus-within { border-color: rgba(139,175,200,.55); background: linear-gradient(145deg, rgba(255,255,255,0.80), rgba(210,228,242,0.55)); box-shadow: 0 1px 0 rgba(255,255,255,0.85) inset, 0 0 0 3px rgba(139,175,200,.12), 0 4px 14px rgba(100,130,160,.10); }
+    .search-icon { color: var(--ghost); flex-shrink: 0; width: 15px; height: 15px; }
+    .search-input {
+      background: none; border: none; outline: none;
+      color: var(--ink); font-family: var(--sans); font-size: 13px; width: 100%;
+    }
+    .search-input::placeholder { color: var(--ghost); }
+
+    .btn-logout {
+      background: linear-gradient(145deg, rgba(255,255,255,0.68), rgba(220,232,240,0.40));
+      border: 1px solid rgba(255,255,255,0.70);
+      border-bottom-color: rgba(138,175,200,.18);
+      border-radius: var(--radius); padding: 10px 15px;
+      color: var(--mid); font-family: var(--sans);
+      font-size: 12px; font-weight: 500; cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s; white-space: nowrap;
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.80) inset, 0 4px 14px rgba(100,130,160,.08);
+      letter-spacing: 0.2px;
+    }
+    .btn-logout:hover { background: linear-gradient(145deg, rgba(255,230,228,0.75), rgba(240,210,208,0.50)); border-color: rgba(192,103,90,.25); color: var(--red); }
+
+    .info-bar { display: flex; gap: 10px; margin-bottom: 36px; flex-wrap: wrap; }
+    .info-chip {
+      display: flex; align-items: center; gap: 8px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.68), rgba(220,232,240,0.40));
+      border: 1px solid rgba(255,255,255,0.70);
+      border-bottom-color: rgba(138,175,200,.18);
+      border-radius: var(--radius); padding: 11px 18px;
+      font-size: 11.5px; font-weight: 400; color: var(--mid); min-width: 130px;
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.80) inset, 0 4px 14px rgba(100,130,160,.08);
+      letter-spacing: 0.1px;
+    }
+    .info-chip-val { font-size: 13.5px; font-weight: 500; color: var(--ink); margin-left: auto; padding-left: 12px; }
+
+    .section { margin-bottom: 36px; }
+    .section-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .section-label {
+      font-size: 10.5px; font-weight: 400; text-transform: uppercase;
+      letter-spacing: 1.8px; color: var(--ghost);
+    }
+    .section-line {
+      flex: 1; height: 1px;
+      background: linear-gradient(to right, var(--line), transparent);
+    }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 10px; }
+
+    .card {
+      background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.72) 0%,
+        rgba(255,255,255,0.44) 50%,
+        rgba(220,232,240,0.38) 100%
+      );
+      border: 1px solid rgba(255,255,255,0.70);
+      border-bottom-color: rgba(138,175,200,.22);
+      border-right-color: rgba(138,175,200,.18);
+      border-radius: 18px; padding: 15px 18px;
+      cursor: pointer; display: flex; align-items: center; gap: 14px;
+      position: relative; overflow: hidden;
+      transition: background 0.28s, border-color 0.28s, transform 0.22s, box-shadow 0.28s;
+      text-decoration: none; color: inherit;
+      animation: fadeUp 0.4s ease backwards;
+      backdrop-filter: blur(22px) saturate(1.6) brightness(1.04);
+      -webkit-backdrop-filter: blur(22px) saturate(1.6) brightness(1.04);
+      box-shadow:
+        0 2px 0 0 rgba(255,255,255,0.80) inset,
+        0 -1px 0 0 rgba(138,175,200,.15) inset,
+        1px 0 0 0 rgba(255,255,255,0.55) inset,
+        0 6px 20px rgba(100,130,160,.10),
+        0 1px 3px rgba(100,130,160,.08);
+    }
+    /* Reflejo especular superior — borde luminoso iOS */
+    .card::before {
+      content: ''; position: absolute;
+      top: 0; left: 8%; right: 8%; height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.90), transparent);
+      pointer-events: none; border-radius: 100%;
+    }
+    /* Brillo interior diagonal — efecto liquid glass */
+    .card::after {
+      content: ''; position: absolute;
+      top: -40%; left: -20%; width: 60%; height: 120%;
+      background: linear-gradient(
+        115deg,
+        rgba(255,255,255,0.22) 0%,
+        rgba(255,255,255,0.06) 60%,
+        transparent 100%
+      );
+      pointer-events: none;
+      border-radius: 50%;
+      transform: skewX(-12deg);
+      transition: opacity .3s;
+    }
+    .card:hover {
+      background: linear-gradient(
+        145deg,
+        rgba(255,255,255,0.82) 0%,
+        rgba(232,242,250,0.62) 50%,
+        rgba(210,228,242,0.50) 100%
+      );
+      border-color: rgba(255,255,255,0.85);
+      border-bottom-color: rgba(138,175,200,.30);
+      transform: translateY(-3px) scale(1.005);
+      box-shadow:
+        0 2px 0 0 rgba(255,255,255,0.90) inset,
+        0 -1px 0 0 rgba(138,175,200,.18) inset,
+        1px 0 0 0 rgba(255,255,255,0.65) inset,
+        0 12px 36px rgba(100,130,160,.16),
+        0 2px 6px rgba(100,130,160,.10);
+    }
+    .card:hover::after { opacity: 1.4; }
+    .card:active { transform: translateY(0) scale(1); box-shadow: 0 2px 8px rgba(100,130,160,.08); }
+
+    .icon-wrap {
+      width: 42px; height: 42px; border-radius: 11px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.75), rgba(220,232,240,0.45));
+      border: 1px solid rgba(255,255,255,0.72);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset, 0 2px 6px rgba(100,130,160,.10);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: background 0.2s, box-shadow 0.2s; overflow: hidden;
+    }
+    .icon-wrap img {
+      width: 26px; height: 26px; object-fit: contain;
+      border-radius: 4px;
+    }
+    .icon-wrap img.error-icon { display: none; }
+    .icon-wrap .icon-fallback { font-size: 20px; display: none; }
+    .icon-wrap img.error-icon ~ .icon-fallback { display: block; }
+    .card:hover .icon-wrap { background: rgba(138,175,200,.15); border-color: rgba(138,175,200,.28); }
+    .card-body { flex: 1; min-width: 0; }
+    .card-name { font-size: 13.5px; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-url { font-size: 11px; color: var(--ghost); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .status {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 6px var(--green);
+      flex-shrink: 0; animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse    { 0%,100%{opacity:1;box-shadow:0 0 5px var(--green);}  50%{opacity:.6;box-shadow:0 0 10px var(--green);} }
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(14px);}           to{opacity:1;transform:translateY(0);} }
+    @keyframes shake    { 0%,100%{transform:translateX(0);}  25%{transform:translateX(-7px);}  75%{transform:translateX(7px);} }
+
+    .card:nth-child(1){animation-delay:.03s} .card:nth-child(2){animation-delay:.07s}
+    .card:nth-child(3){animation-delay:.11s} .card:nth-child(4){animation-delay:.15s}
+    .card:nth-child(5){animation-delay:.19s} .card:nth-child(6){animation-delay:.23s}
+    .card:nth-child(7){animation-delay:.27s} .card:nth-child(8){animation-delay:.31s}
+    .card:nth-child(9){animation-delay:.35s} .card:nth-child(10){animation-delay:.39s}
+    .card:nth-child(11){animation-delay:.43s} .card:nth-child(12){animation-delay:.47s}
+    .card:nth-child(13){animation-delay:.51s}
+
+    @media(max-width:640px){
+      .header{flex-direction:column;align-items:flex-start;border-bottom:none;padding-bottom:0}
+      .header-right{width:100%}
+      .search-inner{width:100%}
+      .clock{font-size:42px}
+      .grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:480px){ .grid{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-screen">
+  <div class="login-box">
+
+    <div class="login-logo">
+      <span class="login-logo-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="48" height="48" fill="#8bafc8">
+          <!-- Server tower body -->
+          <polygon points="210,60 430,60 490,110 490,460 210,460"/>
+          <!-- Tower side face -->
+          <polygon points="150,110 210,60 210,460 150,460" fill="#6a93ae"/>
+          <!-- Vents / slots on front -->
+          <rect x="240" y="90"  width="220" height="22" rx="11" fill="white" opacity="0.85"/>
+          <rect x="240" y="128" width="220" height="22" rx="11" fill="white" opacity="0.85"/>
+          <rect x="240" y="166" width="220" height="22" rx="11" fill="white" opacity="0.85"/>
+          <rect x="240" y="204" width="220" height="22" rx="11" fill="white" opacity="0.85"/>
+          <!-- Small power button circle -->
+          <circle cx="430" cy="300" r="16" fill="white" opacity="0.85"/>
+          <!-- Database cylinders (stack of 3) -->
+          <!-- Top ellipse cap -->
+          <ellipse cx="120" cy="292" rx="108" ry="32" fill="#8bafc8"/>
+          <!-- Cylinder 1 -->
+          <rect x="12" y="292" width="216" height="46"/>
+          <ellipse cx="120" cy="338" rx="108" ry="32" fill="#8bafc8"/>
+          <!-- Cylinder 2 -->
+          <rect x="12" y="338" width="216" height="46"/>
+          <ellipse cx="120" cy="384" rx="108" ry="32" fill="#8bafc8"/>
+          <!-- Cylinder 3 -->
+          <rect x="12" y="384" width="216" height="46"/>
+          <ellipse cx="120" cy="430" rx="108" ry="32" fill="#8bafc8"/>
+          <!-- Inner ellipse highlights -->
+          <ellipse cx="120" cy="292" rx="72" ry="18" fill="white" opacity="0.25"/>
+          <ellipse cx="120" cy="338" rx="72" ry="18" fill="white" opacity="0.18"/>
+          <ellipse cx="120" cy="384" rx="72" ry="18" fill="white" opacity="0.18"/>
+          <ellipse cx="120" cy="430" rx="72" ry="18" fill="white" opacity="0.18"/>
+        </svg>
+      </span>
+      <div class="login-logo-title">Dashboard</div>
+      <div class="login-logo-sub">Acceso restringido</div>
+    </div>
+
+    <div id="lockout-bar" class="lockout-bar"></div>
+
+    <div class="field">
+      <label>Usuario</label>
+      <div class="field-wrap">
+        <input type="text" id="inp-user" autocomplete="username" placeholder="usuario" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Contraseña</label>
+      <div class="field-wrap">
+        <input type="password" id="inp-pass" autocomplete="current-password" placeholder="••••••••" />
+        <button class="toggle-eye" id="eye-btn" type="button" tabindex="-1" aria-label="Ver contraseña">
+          <svg id="eye-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="attempts-hint" id="attempts-hint"></div>
+    <button class="btn-login" id="btn-login" onclick="doLogin()">Entrar</button>
+    <a href="https://luisnietofoto.com" class="btn-login" style="display:block; text-align:center; text-decoration:none; margin-top:10px; border-color:rgba(138,175,200,.35); color:var(--mid);">← Volver a la web</a>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="dashboard">
+  <div class="layout">
+
+    <header class="header">
+      <div class="clock-block">
+        <div class="clock" id="clock">00:00</div>
+        <div class="date" id="date">Cargando...</div>
+      </div>
+      <div class="header-right">
+        <div class="search-inner">
+          <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input class="search-input" id="search-input" type="text" placeholder="Buscar..." />
+        </div>
+        <button class="btn-logout" onclick="doLogout()">⎋ Salir</button>
+      </div>
+    </header>
+
+    <div class="info-bar">
+      <div class="info-chip">🌐 IP Pública<span class="info-chip-val">84.78.155.5</span></div>
+      <div class="info-chip">🖥️ Proxmox<span class="info-chip-val">192.168.1.100</span></div>
+      <div class="info-chip">💾 TrueNAS<span class="info-chip-val">192.168.1.143</span></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><div class="section-label">Servidor</div><div class="section-line"></div></div>
+      <div class="grid">
+        <a class="card" href="https://192.168.1.100:8006/#/" target="_blank"><div class="icon-wrap"><img src="https://www.proxmox.com/favicon.ico" alt="Proxmox" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🖥️</span></div><div class="card-body"><div class="card-name">Proxmox</div><div class="card-url">192.168.1.100:8006</div></div><div class="status"></div></a>
+        <a class="card" href="http://192.168.1.143/ui/signin" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=truenas.com&sz=64" alt="TrueNAS" onerror="this.classList.add('error-icon')"><span class="icon-fallback">💾</span></div><div class="card-body"><div class="card-name">TrueNAS</div><div class="card-url">192.168.1.143</div></div><div class="status"></div></a>
+        <a class="card" href="http://192.168.1.139:81/login" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=nginxproxymanager.com&sz=64" alt="NPM" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🔀</span></div><div class="card-body"><div class="card-name">Nginx Proxy Manager</div><div class="card-url">192.168.1.139:81</div></div><div class="status"></div></a>
+        <a class="card" href="https://search.google.com/search-console" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=search.google.com&sz=64" alt="GSC" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📊</span></div><div class="card-body"><div class="card-name">Google Search Console</div><div class="card-url">search.google.com</div></div><div class="status"></div></a>
+        <a class="card" href="http://84.78.155.5:10011/loginRemote.htm" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=orange.es&sz=64" alt="Livebox" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📡</span></div><div class="card-body"><div class="card-name">Livebox</div><div class="card-url">84.78.155.5:10011</div></div><div class="status"></div></a>
+        <a class="card" href="https://console.cloud.google.com/welcome?project=serene-boulder-427416-v5" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=console.cloud.google.com&sz=64" alt="Google Cloud" onerror="this.classList.add('error-icon')"><span class="icon-fallback">☁️</span></div><div class="card-body"><div class="card-name">Google Cloud</div><div class="card-url">console.cloud.google.com</div></div><div class="status"></div></a>
+        <a class="card" href="https://login.tailscale.com/admin/machines" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=tailscale.com&sz=64" alt="Tailscale" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🔗</span></div><div class="card-body"><div class="card-name">Tailscale</div><div class="card-url">login.tailscale.com</div></div><div class="status"></div></a>
+        <a class="card" href="https://github.com/luisnian" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=github.com&sz=64" alt="GitHub" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🐙</span></div><div class="card-body"><div class="card-name">GitHub</div><div class="card-url">github.com/luisnian</div></div><div class="status"></div></a>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><div class="section-label">Servicios</div><div class="section-line"></div></div>
+      <div class="grid">
+        <a class="card" href="https://luisnietofoto.com" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=luisnietofoto.com&sz=64" alt="LNF" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📷</span></div><div class="card-body"><div class="card-name">Luis Nieto Fotografía</div><div class="card-url">luisnietofoto.com</div></div><div class="status"></div></a>
+        <a class="card" href="https://helenanailshome.com" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=helenanailshome.com&sz=64" alt="HNH" onerror="this.classList.add('error-icon')"><span class="icon-fallback">💅</span></div><div class="card-body"><div class="card-name">Helena Nails Home</div><div class="card-url">helenanailshome.com</div></div><div class="status"></div></a>
+        <a class="card" href="https://cloud.luisnietofoto.com/index.php/login" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=nextcloud.com&sz=64" alt="Nextcloud" onerror="this.classList.add('error-icon')"><span class="icon-fallback">☁️</span></div><div class="card-body"><div class="card-name">Nextcloud</div><div class="card-url">cloud.luisnietofoto.com</div></div><div class="status"></div></a>
+        <a class="card" href="https://immich.luisnietofoto.com/auth/login" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=immich.app&sz=64" alt="Immich" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📸</span></div><div class="card-body"><div class="card-name">Immich</div><div class="card-url">immich.luisnietofoto.com</div></div><div class="status"></div></a>
+        <a class="card" href="https://emby.luisnietofoto.com/web/index.html" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=emby.media&sz=64" alt="Emby" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🎬</span></div><div class="card-body"><div class="card-name">Emby</div><div class="card-url">emby.luisnietofoto.com</div></div><div class="status"></div></a>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header"><div class="section-label">Servicios Externos</div><div class="section-line"></div></div>
+      <div class="grid">
+        <a class="card" href="https://dash.cloudflare.com" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=cloudflare.com&sz=64" alt="Cloudflare" onerror="this.classList.add('error-icon')"><span class="icon-fallback">🛡️</span></div><div class="card-body"><div class="card-name">Cloudflare</div><div class="card-url">dash.cloudflare.com</div></div><div class="status"></div></a>
+        <a class="card" href="https://mega.nz/fm/id1XXJLb" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=mega.nz&sz=64" alt="Mega" onerror="this.classList.add('error-icon')"><span class="icon-fallback">💿</span></div><div class="card-body"><div class="card-name">Mega</div><div class="card-url">mega.nz</div></div><div class="status"></div></a>
+        <a class="card" href="https://www.amazon.es/photos" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=amazon.es&sz=64" alt="Amazon" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📱</span></div><div class="card-body"><div class="card-name">Amazon Photos</div><div class="card-url">amazon.es/photos</div></div><div class="status"></div></a>
+        <a class="card" href="https://drive.google.com/drive/u/0/my-drive" target="_blank"><div class="icon-wrap"><img src="https://www.google.com/s2/favicons?domain=drive.google.com&sz=64" alt="Google Drive" onerror="this.classList.add('error-icon')"><span class="icon-fallback">📁</span></div><div class="card-body"><div class="card-name">Google Drive</div><div class="card-url">drive.google.com</div></div><div class="status"></div></a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+const _C = (()=>{
+  const _u = [0x61,0x64,0x6d,0x69,0x6e]; 
+  const _p = "7bd4fb378f56ca71a6246787753199967f4c3dced3084ff87651dff2d31e4ee2";
+
+  
+  return {
+    u: String.fromCharCode(..._u),
+    p: _p,
+    
+    ttl: 8 * 60 * 60 * 1000,
+    
+    maxTries: 5,
+    
+    lockBase: 15,
+  };
+})();
+
+
+async function _h(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+window._h = _h;
+
+
+function _getState() {
+  return {
+    tries:   parseInt(sessionStorage.getItem('_t')  || '0'),
+    lockUntil: parseInt(sessionStorage.getItem('_l') || '0'),
+    lockN:   parseInt(sessionStorage.getItem('_n')  || '0'),
+  };
+}
+function _setState(s) {
+  sessionStorage.setItem('_t', s.tries);
+  sessionStorage.setItem('_l', s.lockUntil);
+  sessionStorage.setItem('_n', s.lockN);
+}
+
+let _lockTimer = null;
+
+function _registerFail() {
+  const s = _getState();
+  s.tries++;
+  if (s.tries >= _C.maxTries) {
+    s.lockN++;
+    
+    const secs = _C.lockBase * s.lockN * s.lockN;
+    s.lockUntil = Date.now() + secs * 1000;
+    s.tries = 0;
+  }
+  _setState(s);
+}
+
+function _isLocked() {
+  return Date.now() < _getState().lockUntil;
+}
+
+function _remainingSecs() {
+  return Math.ceil((_getState().lockUntil - Date.now()) / 1000);
+}
+
+function _startLockTimer() {
+  const bar = document.getElementById('lockout-bar');
+  const btn = document.getElementById('btn-login');
+  if (_lockTimer) clearInterval(_lockTimer);
+  _lockTimer = setInterval(() => {
+    const rem = _remainingSecs();
+    if (rem <= 0) {
+      clearInterval(_lockTimer);
+      _lockTimer = null;
+      bar.style.display = 'none';
+      btn.disabled = false;
+    } else {
+      const s = _getState();
+      const plural = rem === 1 ? 'segundo' : 'segundos';
+      bar.style.display = 'block';
+      bar.textContent = `⛔ Demasiados intentos (bloqueo nº${s.lockN}) — espera ${rem} ${plural}`;
+      btn.disabled = true;
+    }
+  }, 400);
+}
+
+// ─── Sesión ──────────────────────────────────────────────────
+function _setSession() {
+  sessionStorage.setItem('_a', '1');
+  sessionStorage.setItem('_e', String(Date.now() + _C.ttl));
+}
+function _sessionOk() {
+  return sessionStorage.getItem('_a') === '1' &&
+         parseInt(sessionStorage.getItem('_e') || '0') > Date.now();
+}
+function doLogout() {
+  sessionStorage.removeItem('_a');
+  sessionStorage.removeItem('_e');
+  location.href = 'https://luisnietofoto.com';
+}
+
+// ─── Login ───────────────────────────────────────────────────
+async function doLogin() {
+  if (_isLocked()) return;
+
+  const user = document.getElementById('inp-user').value.trim();
+  const pass = document.getElementById('inp-pass').value;
+  const hint = document.getElementById('attempts-hint');
+  const uInp = document.getElementById('inp-user');
+  const pInp = document.getElementById('inp-pass');
+
+  if (!user || !pass) {
+    hint.textContent = 'Rellena todos los campos.';
+    return;
+  }
+
+  const passHash = await _h(pass);
+  const ok = (user === _C.u) && (passHash === _C.p);
+
+  if (!ok) {
+    _registerFail();
+    const s = _getState();
+
+    // Sacudir campos
+    [uInp, pInp].forEach(el => {
+      el.classList.remove('shake');
+      void el.offsetWidth; // reflow para reiniciar animación
+      el.classList.add('shake');
+    });
+    pInp.value = '';
+
+    if (_isLocked()) {
+      _startLockTimer();
+      hint.textContent = '';
+    } else {
+      const left = _C.maxTries - s.tries;
+      hint.textContent = `Credenciales incorrectas — ${left} intento${left!==1?'s':''} restante${left!==1?'s':''}`;
+    }
+    return;
+  }
+
+  // ✓ Correcto
+  [uInp, pInp].forEach(el => el.classList.remove('shake'));
+  hint.textContent = '';
+  const s = _getState(); s.tries = 0; _setState(s);
+  _setSession();
+  _enter();
+}
+
+function _enter() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+}
+
+// ─── Toggle contraseña visible ───────────────────────────────
+document.getElementById('eye-btn').addEventListener('click', () => {
+  const inp = document.getElementById('inp-pass');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  document.getElementById('eye-icon').innerHTML = show
+    ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`
+    : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+});
+
+// Enter key
+['inp-user','inp-pass'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+});
+
+// ─── Init ────────────────────────────────────────────────────
+(function init() {
+  if (_sessionOk()) { _enter(); return; }
+  if (_isLocked()) _startLockTimer();
+})();
+
+// ─── Reloj ───────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent =
+    String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  const d = now.toLocaleDateString('es-ES', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('date').textContent = d.charAt(0).toUpperCase() + d.slice(1);
+}
+updateClock(); setInterval(updateClock, 1000);
+
+// ─── Búsqueda ────────────────────────────────────────────────
+document.getElementById('search-input').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('.card').forEach(c => {
+    const t = c.querySelector('.card-name').textContent.toLowerCase()
+            + c.querySelector('.card-url').textContent.toLowerCase();
+    c.style.display = t.includes(q) ? '' : 'none';
+  });
+});
+</script>
+</body>
+</html>
